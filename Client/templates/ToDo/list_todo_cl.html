@@ -6,15 +6,19 @@
 <nav class="navbar bg-body-tertiary">
     <div class="container-fluid d-flex justify-content-between align-items-center">
         <div>
-            <a href="" class="btn btn-success">Create Task</a>
+            <a href="{% url 'td:client_create_td' %}" class="btn btn-success">Create Task</a>
         </div>
-        <form class="form-inline">
+        <form class="form-inline" method="GET">
             <div class="form-group mb-0">
-                <select class="form-control" id="status_filter" name="status">
+                <select class="form-control" id="endpoint_filter" name="endpoint">
                     <option value="">All</option>
-                    <option value="todo">To Do</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="done">Done</option>
+                    <option value="ids">Task IDs</option>
+                    <option value="id-titles">Task IDs and Titles</option>
+                    <option value="unresolved">Unresolved Tasks</option>
+                    <option value="resolved">Resolved Tasks</option>
+                    <option value="userids">Task IDs and User IDs</option>
+                    <option value="resolved-userids">Resolved Task IDs and User IDs</option>
+                    <option value="unresolved-userids">Unresolved Task IDs and User IDs</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary ml-2">Apply Filter</button>
@@ -28,13 +32,21 @@
     <div class="col-md-4 mb-4">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">{{ td.title }}</h5>
-                <p class="card-text">Due Date: {{ td.due_date }}</p>
-                <p class="card-text">Priority: {{ td.priority }}</p>
-                <p class="card-text">State: {{ td.state }}</p>
-                <a href="" class="btn btn-info mr-2">Detail</a>
-                <a href="" class="btn btn-warning mr-2">Update</a>
-                <a href="" class="btn btn-danger">Delete</a>
+                {% if endpoint == 'ids' %}
+                    <h5 class="card-title">Task ID: {{ td.id }}</h5>
+                {% elif endpoint == 'id-titles' %}
+                    <h5 class="card-title">{{ td.title }}</h5>
+                    <p class="card-text">Task ID: {{ td.id }}</p>
+                {% else %}
+                    <h5 class="card-title">{{ td.title }}</h5>
+                    <p class="card-text">Due Date: {{ td.due_date }}</p>
+                    <p class="card-text">Priority: {{ td.priority }}</p>
+                    <p class="card-text">State: {{ td.state }}</p>
+                {% endif %}
+                
+                <a href="{% url 'td:client_detail_td' td.id  %}" class="btn btn-info mr-2">Detail</a>
+                <a href="{% url 'td:client_update_td' td.id %}" class="btn btn-warning mr-2">Update</a>
+                <a href="{% url 'td:client_delete_td' td.id %}" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>

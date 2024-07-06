@@ -1,14 +1,13 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import generics
-from django.db.models.signals import post_save, post_delete
-from django.dispatch import receiver
-from ToDo.models import Task, Tag, Area, Comment, Attachment, ActivityLog
+from ToDo.models import Task, Area, Comment, CustomUser
 from ToDo.serializers import (
-     DetailTaskSerializer, TagSerializer, AreaSerializer,
-    CommentSerializer, AttachmentSerializer, ActivityLogSerializer
+    DetailTaskSerializer, CreateTaskSerializer,
+    AreaSerializer, CommentSerializer, UserSerializer,
+    TaskIDSerializer, TaskIDTitleSerializer,
+    UnresolvedTasksSerializer, ResolvedTasksSerializer,
+    TaskUserIDSerializer, ResolvedTasksUserIDSerializer,
+    UnresolvedTasksUserIDSerializer
 )
-
 
 # Task 
 class ListTaskAPIView(generics.ListAPIView):
@@ -21,7 +20,7 @@ class DetailTaskAPIView(generics.RetrieveAPIView):
 
 class CreateTaskAPIView(generics.CreateAPIView):
     queryset = Task.objects.all()
-    serializer_class = DetailTaskSerializer
+    serializer_class = CreateTaskSerializer
 
 class UpdateTaskAPIView(generics.UpdateAPIView):
     queryset = Task.objects.all()
@@ -30,28 +29,43 @@ class UpdateTaskAPIView(generics.UpdateAPIView):
 class DeleteTaskAPIView(generics.DestroyAPIView):
     queryset = Task.objects.all()
     serializer_class = DetailTaskSerializer
+    
+# Asked serializers:
+class ListTaskIDOnlyAPIView(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskIDSerializer  #only task ID
+    
+class ListTaskIDTitleAPIView(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskIDTitleSerializer  # Every task, only ID and title
 
+class UnresolvedTasksAPIView(generics.ListAPIView):
+    serializer_class = UnresolvedTasksSerializer  # Every pending task, only ID and titkes
 
-# Tag 
-class ListTagAPIView(generics.ListAPIView):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+    def get_queryset(self):
+        return Task.objects.filter(state='PENDING')
 
-class DetailTagAPIView(generics.RetrieveAPIView):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+class ResolvedTasksAPIView(generics.ListAPIView):
+    serializer_class = ResolvedTasksSerializer  # Every resolverd task, ID and titles
 
-class CreateTagAPIView(generics.CreateAPIView):
-    serializer_class = TagSerializer
+    def get_queryset(self):
+        return Task.objects.filter(state='DONE')
 
-class UpdateTagAPIView(generics.UpdateAPIView):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+class ListTaskUserIDAPIView(generics.ListAPIView):
+    queryset = Task.objects.all()
+    serializer_class = TaskUserIDSerializer  # Every task by id and user
 
-class DeleteTagAPIView(generics.DestroyAPIView):
-    queryset = Tag.objects.all()
-    serializer_class = TagSerializer
+class ResolvedTasksUserIDAPIView(generics.ListAPIView):
+    serializer_class = ResolvedTasksUserIDSerializer  # every resolverd task by ID and User
 
+    def get_queryset(self):
+        return Task.objects.filter(state='DONE')
+
+class UnresolvedTasksUserIDAPIView(generics.ListAPIView):
+    serializer_class = UnresolvedTasksUserIDSerializer  # Every pending task user n ID
+
+    def get_queryset(self):
+        return Task.objects.filter(state='PENDING')
 
 # Area 
 class ListAreaAPIView(generics.ListAPIView):
@@ -88,24 +102,11 @@ class DeleteCommentAPIView(generics.DestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
-# Attachment
+# User    
+class UserListView(generics.ListAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
 
-
-# ActivityLog 
-class ListActivityLogAPIView(generics.ListAPIView):
-    queryset = ActivityLog.objects.all()
-    serializer_class = ActivityLogSerializer
-
-class DetailActivityLogAPIView(generics.RetrieveAPIView):
-    queryset = ActivityLog.objects.all()
-    serializer_class = ActivityLogSerializer
-    
-@receiver(post_save, sender=Task)
-def log_task_creation(sender, instance, created, **kwargs):
-    if created:
-        ActivityLog.objects.create(action=f'Task created: {instance.title}')
-
-@receiver(post_delete, sender=Task)
-def log_task_deletion(sender, instance, **kwargs):
-    ActivityLog.objects.create(action=f'Task deleted: {instance.title}')
-    
+class UserCreateView(generics.CreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer

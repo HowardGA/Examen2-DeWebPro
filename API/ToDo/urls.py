@@ -10,13 +10,15 @@ urlpatterns = [
     path('tasks/<int:pk>/', views.DetailTaskAPIView.as_view(), name='task-detail'),
     path('tasks/<int:pk>/update/', views.UpdateTaskAPIView.as_view(), name='task-update'),
     path('tasks/<int:pk>/delete/', views.DeleteTaskAPIView.as_view(), name='task-delete'),
-
-    # Tag 
-    path('tags/', views.ListTagAPIView.as_view(), name='tag-list'),
-    path('tags/create/', views.CreateTagAPIView.as_view(), name='tag-create'),
-    path('tags/<int:pk>/', views.DetailTagAPIView.as_view(), name='tag-detail'),
-    path('tags/<int:pk>/update/', views.UpdateTagAPIView.as_view(), name='tag-update'),
-    path('tags/<int:pk>/delete/', views.DeleteTagAPIView.as_view(), name='tag-delete'),
+    
+    # Task with with filters
+    path('tasks/ids/', views.ListTaskIDOnlyAPIView.as_view(), name='task-ids'),
+    path('tasks/id-titles/', views.ListTaskIDTitleAPIView.as_view(), name='task-id-titles'),
+    path('tasks/unresolved/', views.UnresolvedTasksAPIView.as_view(), name='task-unresolved'),
+    path('tasks/resolved/', views.ResolvedTasksAPIView.as_view(), name='task-resolved'),
+    path('tasks/userids/', views.ListTaskUserIDAPIView.as_view(), name='task-userids'),
+    path('tasks/resolved/userids/', views.ResolvedTasksUserIDAPIView.as_view(), name='task-resolved-userids'),
+    path('tasks/unresolved/userids/', views.UnresolvedTasksUserIDAPIView.as_view(), name='task-unresolved-userids'),
 
     # Area 
     path('areas/', views.ListAreaAPIView.as_view(), name='areas-list'),
@@ -29,9 +31,9 @@ urlpatterns = [
     path('comments/create/', views.CreateCommentAPIView.as_view(), name='comments-create'),
     path('comments/<int:pk>/', views.DetailCommentAPIView.as_view(), name='comments-detail'),
     path('comments/<int:pk>/delete/', views.DeleteCommentAPIView.as_view(), name='comments-delete'),
-    # Attachment 
+    
+    #User
+     path('users/', views.UserListView.as_view(), name='user-list'),
+    path('users/create/', views.UserCreateView.as_view(), name='user-create'),
 
-    # ActivityLog 
-    path('ActivityLog/', views.ListActivityLogAPIView.as_view(), name='areas-list'),
-    path('ActivityLog/<int:pk>/', views.DetailActivityLogAPIView.as_view(), name='ActivityLog-detail'),
 ]

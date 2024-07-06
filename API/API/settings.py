@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'rest_framework'
     
 ]
+AUTH_USER_MODEL = 'ToDo.CustomUser'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -76,6 +78,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'API.wsgi.application'
+
+
 
 
 # Database

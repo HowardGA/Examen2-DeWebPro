@@ -1,0 +1,13 @@
+{% extends "base/base.html" %}
+
+{% block title %}DELETE TASK VIEW{% endblock title %}
+
+{% block content %}
+<h1>Delete Task</h1>
+<p>Are you sure you want to delete "{{ task.title }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-outline-danger form-control">Delete</button>
+    <a href="{% url 'td:client_list_td' %}" class="btn btn-outline-secondary form-control">Cancel</a>
+</form>
+{% endblock content %}
