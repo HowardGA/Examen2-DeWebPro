@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}
+
+{% block title %}Delete Area{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Delete Area</h2>
+    <p>Are you sure you want to delete the area "{{ area.area_name }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="{% url 'td:areas-list' %}" class="btn btn-secondary form-control">Cancel</a>
+        <a href="{% url 'td:areas-list' %}" class="btn btn-outline-secondary form-control">Cancel</a>
+
+    </form>
+</div>
+{% endblock %}

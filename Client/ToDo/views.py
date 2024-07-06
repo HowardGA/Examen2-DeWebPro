@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import generic
 import requests
-from .forms import CreateTaskForm
+from .forms import CreateTaskForm, AreaForm
 # Create your views here.
 class ListTasksClient(generic.View):
     template_name = "ToDo/list_todo_cl.html"
@@ -155,3 +155,90 @@ class DeleteTasksClient(generic.View):
             # Handle exceptions, log, or render an error page
             print(f"Error deleting task: {e}")
             return render(request, self.template_name, {"error": "Failed to delete task."})
+        
+#AREAS
+
+class ListAreasClient(generic.View):
+    template_name = "ToDo/list_areas_cl.html"
+    url = "http://localhost:8000/api/areas/"
+    response = None
+    context = {}
+    
+    def get(self, request):
+        self.response = requests.get(url=self.url)
+        self.context = {
+            "areas": self.response.json()
+        }
+        return render(request, self.template_name, self.context)
+
+class CreateAreaClient(generic.View):
+    template_name = "ToDo/create_area_cl.html"
+    url = "http://localhost:8000/api/areas/create/"
+    context = {}
+    form_class = AreaForm
+    
+    def get(self, request):
+        form = self.form_class()
+        self.context = {"form": form}
+        return render(request, self.template_name, self.context)
+    
+    def post(self, request):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            payload = form.cleaned_data
+            response = requests.post(url=self.url, json=payload)
+            return redirect("td:areas-list")
+        else:
+            self.context = {"form": form}
+            return render(request, self.template_name, self.context)
+
+class DetailAreaClient(generic.View):
+    template_name = "ToDo/detail_area_cl.html"
+    url = "http://localhost:8000/api/areas/"
+    response = None
+    
+    def get(self, request, pk):
+        self.url = self.url + f'{pk}/'
+        self.response = requests.get(url=self.url)
+        self.context = {"area": self.response.json()}
+        return render(request, self.template_name, self.context)
+
+class UpdateAreaClient(generic.View):
+    template_name = "ToDo/update_area_cl.html"
+    url = "http://localhost:8000/api/areas/"
+    context = {}
+    form_class = AreaForm
+    
+    def get(self, request, pk):
+        area_response = requests.get(self.url + f'{pk}/')
+        area_data = area_response.json()
+        form = self.form_class(initial=area_data)
+        self.context = {
+            "form": form,
+            "area_id": pk
+        }
+        return render(request, self.template_name, self.context)
+    
+    def post(self, request, pk):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            payload = form.cleaned_data
+            response = requests.put(url=self.url + f'{pk}/update/', json=payload)
+            return redirect("td:areas-list")
+        else:
+            self.context = {"form": form}
+            return render(request, self.template_name, self.context)
+
+class DeleteAreaClient(generic.View):
+    template_name = "ToDo/delete_area_cl.html"
+    url = "http://localhost:8000/api/areas/"
+    
+    def get(self, request, pk):
+        area_response = requests.get(f"{self.url}{pk}/")
+        area_data = area_response.json()
+        context = {"area": area_data}
+        return render(request, self.template_name, context)
+    
+    def post(self, request, pk):
+        response = requests.delete(f"{self.url}{pk}/delete/")
+        return redirect("td:areas-list")

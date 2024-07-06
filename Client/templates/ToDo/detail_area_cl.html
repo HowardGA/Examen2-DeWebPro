@@ -1,0 +1,15 @@
+{% extends "base/base.html" %}
+
+{% block title %}Area Detail{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mt-4">Area Detail</h2>
+    <p><strong>ID:</strong> {{ area.id }}</p>
+    <p><strong>Area Name:</strong> {{ area.area_name }}</p>
+    <p><strong>Description:</strong> {{ area.description }}</p>
+    <a href="{% url 'td:areas-update' area.id %}" class="btn btn-warning">Update</a>
+    <a href="{% url 'td:areas-delete' area.id %}" class="btn btn-danger">Delete</a>
+    <a href="{% url 'td:areas-list' %}" class="btn btn-secondary">Back to List</a>
+</div>
+{% endblock %}

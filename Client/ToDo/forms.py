@@ -40,3 +40,7 @@ class CreateTaskForm(forms.Form):
         choices=[],
         widget=forms.Select(attrs={"class": "form-select form-control"})
     )
+    
+class AreaForm(forms.Form):
+    area_name = forms.CharField(max_length=32, widget=forms.TextInput(attrs={"type": "text", "class": "form-control", "placeholder": "Area Name"}))
+    description = forms.CharField(max_length=128, required=False, widget=forms.TextInput(attrs={"type": "text", "class": "form-control", "placeholder": "Area description"}))
